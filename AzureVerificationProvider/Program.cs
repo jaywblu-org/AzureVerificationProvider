@@ -1,4 +1,6 @@
 using AzureVerificationProvider.Data.Contexts;
+using AzureVerificationProvider.Functions;
+using AzureVerificationProvider.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,8 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.AddDbContext<DataContext>(x => x.UseSqlServer(Environment.GetEnvironmentVariable("VerificationRequestDB")));
+        services.AddScoped<VerificationCodeService>();
+        services.AddScoped<VerificationCleanerService>();
     })
     .Build();
 
