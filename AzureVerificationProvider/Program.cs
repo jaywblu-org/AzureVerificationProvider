@@ -1,3 +1,4 @@
+using Azure.Messaging.ServiceBus;
 using AzureVerificationProvider.Data.Contexts;
 using AzureVerificationProvider.Functions;
 using AzureVerificationProvider.Services;
@@ -14,6 +15,7 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.AddDbContext<DataContext>(x => x.UseSqlServer(Environment.GetEnvironmentVariable("VerificationRequestDB")));
+        services.AddSingleton(x => new ServiceBusClient(Environment.GetEnvironmentVariable("ServiceBusConnection")));
         services.AddScoped<VerificationCodeService>();
         services.AddScoped<VerificationCleanerService>();
         services.AddScoped<ValidateVerificationCodeService>();
