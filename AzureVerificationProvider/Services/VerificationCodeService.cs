@@ -2,6 +2,7 @@
 using AzureVerificationProvider.Data.Contexts;
 using AzureVerificationProvider.Data.Enttities;
 using AzureVerificationProvider.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -99,6 +100,28 @@ public class VerificationCodeService(ILogger<VerificationCodeService> logger, IS
             if (verificationRequest != null && !string.IsNullOrEmpty(verificationRequest.Email))
             {
                 return verificationRequest;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"ERROR: GenerateVerificationCode.UnpackVerificationRequest :: {ex.Message}");
+        }
+
+        return null!;
+    }
+
+    public async Task<VerificationRequet> UnpackHttpVerificationRequest(HttpRequest req)
+    {
+        try
+        {
+            var body = await new StreamReader(req.Body).ReadToEndAsync();
+            if (!string.IsNullOrEmpty(body))
+            {
+                var verificationRequest = JsonConvert.DeserializeObject<VerificationRequet>(body);
+                if (verificationRequest != null && !string.IsNullOrEmpty(verificationRequest.Email))
+                {
+                    return verificationRequest;
+                }
             }
         }
         catch (Exception ex)
